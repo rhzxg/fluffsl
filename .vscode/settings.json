@@ -1,0 +1,28 @@
+{
+	"editor.insertSpaces": false,
+	"editor.semanticTokenColorCustomizations": {
+		"enabled": true, // enable for all themes
+		"rules": {}
+	},
+
+	"fluffsl.keywords": [
+		"STRUCT", "DATA", "INIT_MAIN", "RETURN",
+		"if", "else", "for", "while", "do",
+		"continue", "break", "discard"
+	],
+	"fluffsl.types": [
+		"void", "float", "float2", "float3", "float4",
+		"int", "int2", "int3", "int4",
+		"uint", "uint2", "uint3", "uint4",
+		"bool", "float4x4", "float3x3",
+		"texture2D", "sampler2D"
+	],
+	"fluffsl.functions": [
+		"mul", "normalize", "dot", "max", "min", "length",
+		"Get", "texture", "abs", "sin", "cos", "tan", "pow", "sqrt"
+	],
+	"fluffsl.semantics": [
+		"POSITION", "NORMAL", "COLOR",
+		"SV_Position", "SV_Target", "SV_InstanceID"
+	]
+}
