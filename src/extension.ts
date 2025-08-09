@@ -131,10 +131,10 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 	}
 
 	private _tokenizeBrackets(text: string, result: IParsedToken[], tokenized: MultiMap) {
-		type Tuple = [number, number];  // [row, indexInRow]
-		const stackParentheses: Tuple[] = [];
-		const stackBrackets: Tuple[] = [];
-		const stackBraces: Tuple[] = [];
+		type Pair = [number, number];  // [row, indexInRow]
+		const stackParentheses: Pair[] = [];
+		const stackBrackets: Pair[] = [];
+		const stackBraces: Pair[] = [];
 		const brackets = new Set<string>(['(', ')', '[', ']', '{', '}']);
 
 		// [nestedIndex, leftBracketRow, leftBracketIndexInRow, rightBracketRow, rightBracketIndexInRow]
