@@ -9,7 +9,8 @@ const legend = (function () {
 		'comment', 'string', 'keyword', 'number', 'regexp', 'operator', 'namespace',
 		'type', 'struct', 'class', 'interface', 'enum', 'typeParameter', 'function',
 		'method', 'decorator', 'macro', 'variable', 'parameter', 'property', 'label',
-		'semantic', 'bracket0', 'bracket1', 'bracket2', 'bracket3', 'bracket4',
+		'directive', 'semantic',
+		'bracket0', 'bracket1', 'bracket2', 'bracket3', 'bracket4',
 	];
 	tokenTypesLegend.forEach((tokenType, index) => tokenTypes.set(tokenType, index));
 
@@ -228,19 +229,21 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 	}
 
 	private _tokenizeRestSyntax(text: string, result: IParsedToken[], tokenized: MultiMap) {
+		const directives = this._getConfigSet('directives');
 		const keywords = this._getConfigSet('keywords');
 		const types = this._getConfigSet('types');
 		const functions = this._getConfigSet('functions');
 		const semantics = this._getConfigSet('semantics');
 
 		const operatorPattern = /([+\-*/%<=>!&|^]+|==|!=|>=|<=|&&|\|\||<<|>>|\+\+|--)/g;
-		const keywordPattern = new RegExp(`\\b(${Array.from(keywords).join('|')})\\b|#include`, 'g');
+		const directivePattern = new RegExp(`(${Array.from(directives).join('|')})`, 'g');
+		const keywordPattern = new RegExp(`\\b(${Array.from(keywords).join('|')})\\b`, 'g');
 		const typePattern = new RegExp(`\\b(${Array.from(types).join('|')})\\b`, 'g');
 		const functionPattern = new RegExp(`\\b(${Array.from(functions).join('|')})\\b`, 'g');
 		const semanticsPattern = new RegExp(`\\b(${Array.from(semantics).join('|')})\\b`, 'g');
 
 		const combinedPattern = new RegExp(
-			`(${operatorPattern.source}|${keywordPattern.source}|${typePattern.source}|${functionPattern.source}|${semanticsPattern.source})`,
+			`(${operatorPattern.source}|${directivePattern.source}|${keywordPattern.source}|${typePattern.source}|${functionPattern.source}|${semanticsPattern.source})`,
 			'g'
 		);
 
@@ -260,7 +263,9 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 			let tokenType = '';
 			if (operatorPattern.test(commentLine)) {
 				tokenType = 'operator';
-			} else if (keywords.has(commentLine) || commentLine == '#include') {
+			} else if (directives.has(commentLine)) {
+				tokenType = 'directive';
+			} else if (keywords.has(commentLine)) {
 				tokenType = 'keyword';
 			} else if (types.has(commentLine)) {
 				tokenType = 'type';
@@ -270,8 +275,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 				tokenType = 'semantic';
 			}
 
-			if (tokenType.length !== 0)
-			{
+			if (tokenType.length !== 0) {
 				result.push({
 					line: startLine,
 					startCharacter: startCharacter,

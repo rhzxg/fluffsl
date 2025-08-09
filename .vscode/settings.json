@@ -3,6 +3,9 @@
 	"editor.semanticTokenColorCustomizations": {
 		"enabled": true, // enable for all themes
 		"rules": {
+			"directive": {
+				"foreground": "#808080"
+			},
 			"type": {
 				"foreground": "#0000ff"
 			},
@@ -10,7 +13,7 @@
 				"foreground": "#00008b"
 			},
 			"keyword": {
-				"foreground": "#8f08c4"
+				"foreground": "#6f008a"
 			},
 			"bracket0": {
 				"foreground": "#986f0d"
@@ -29,6 +32,11 @@
 			},
 		}
 	},
+	"fluffsl.directives": [
+		"#include", "#define", "#undef", "#ifndef", "#ifdef",
+		"#if", "#elif", "#else", "#endif",
+		"#error", "#warning", "#line", "#pragma",
+	],
 	"fluffsl.keywords": [
 		"STRUCT", "DATA", "INIT_MAIN", "RETURN",
 		"if", "else", "for", "while", "do",
@@ -47,7 +55,12 @@
 		"Get", "VS_MAIN"
 	],
 	"fluffsl.semantics": [
+		"RES", "TEX", "TEXCOORD",
 		"POSITION", "NORMAL", "COLOR",
-		"SV_Position", "SV_Target", "SV_InstanceID"
+		"CBUFFER", "BUFFER", 
+		"SV_Position", "SV_InstanceID", "SV_PrimitiveID", 
+		"SV_Target","SV_Target1", "SV_Target2", "SV_Target3",
+		"SV_Target4","SV_Target5", "SV_Target6", "SV_Target7",  
+		"SV_SampleMask", "SV_ClipDistance", "SV_CullDistance"
 	]
 }
