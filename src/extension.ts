@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { MultiMap } from './multimap';
 
 const tokenTypes = new Map<string, number>();
 const tokenModifiers = new Map<string, number>();
@@ -63,7 +64,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 
 	private _parseText(text: string): IParsedToken[] {
 		const result: IParsedToken[] = [];
-		const tokenized = new Set<number>();
+		const tokenized = new MultiMap(); // [row, [startIndex, endInedx]]
 		this._tokenizeComments(text, result, tokenized);
 		this._tokenizeBrackets(text, result, tokenized);
 		return result;
@@ -75,7 +76,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		return new Set(arr);
 	}
 
-	private _tokenizeComments(text: string, result: IParsedToken[], tokenized: Set<number>) {
+	private _tokenizeComments(text: string, result: IParsedToken[], tokenized: MultiMap) {
 		// tokenize [/* */]
 		const blockCommentRegex = /\/\*[\s\S]*?\*\//g;
 		let match: RegExpExecArray | null;
@@ -99,23 +100,23 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 					tokenModifiers: []
 				});
 
-				tokenized.add(line);
+				tokenized.add(line, [startCharacter, lineText.length]);
 			}
 		}
 
 		// tokenize [//]
 		const lineCommentRegex = /\/\/[^\r\n]*/g;
 		while ((match = lineCommentRegex.exec(text)) !== null) {
-			if (tokenized.has(match.index)) {
-				continue;
-			}
-
 			const startOffset = match.index;
 			const beforeStart = text.slice(0, startOffset);
 			const lastLine = text.lastIndexOf('\n', startOffset);
 			const startLine = beforeStart.split(/\r?\n/).length - 1;
 			const commentLine = match[0];
 			const startCharacter = startOffset - lastLine - 1;
+
+			if (tokenized.has(startLine, [startCharacter, startCharacter + commentLine.length])) {
+				continue;
+			}
 
 			result.push({
 				line: startLine,
@@ -125,11 +126,11 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 				tokenModifiers: []
 			});
 
-			tokenized.add(startLine);
+			tokenized.add(startLine, [startCharacter, startCharacter + commentLine.length]);
 		}
 	}
 
-	private _tokenizeBrackets(text: string, result: IParsedToken[], tokenized: Set<number>) {
+	private _tokenizeBrackets(text: string, result: IParsedToken[], tokenized: MultiMap) {
 		type Tuple = [number, number];  // [row, indexInRow]
 		const stackParentheses: Tuple[] = [];
 		const stackBrackets: Tuple[] = [];
@@ -141,12 +142,12 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const paired: Paired[] = [];
 		const commentLines = text.split(/\r?\n/);
 		for (let row = 0; row < commentLines.length; ++row) {
-			if (tokenized.has(row)) {
-				continue;
-			}
-
 			const commentLine = commentLines[row];
 			for (let index = 0; index < commentLine.length; ++index) {
+				if (tokenized.has(row, [index, index + 1])) {
+					continue;
+				}
+
 				const c = commentLine[index];
 				if (!brackets.has(c)) {
 					continue;
