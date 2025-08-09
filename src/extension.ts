@@ -98,7 +98,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 				line: startLine,
 				startCharacter: startCharacter,
 				length: commentLine.length,
-				tokenType: "string",
+				tokenType: 'string',
 				tokenModifiers: []
 			});
 
@@ -126,7 +126,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 					line: line,
 					startCharacter: startCharacter,
 					length: lineText.length,
-					tokenType: "comment",
+					tokenType: 'comment',
 					tokenModifiers: []
 				});
 
@@ -152,7 +152,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 				line: startLine,
 				startCharacter: startCharacter,
 				length: commentLine.length,
-				tokenType: "comment",
+				tokenType: 'comment',
 				tokenModifiers: []
 			});
 
@@ -209,7 +209,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		}
 
 		paired.forEach((pair) => {
-			const tokenType = "bracket" + (pair[0] % 5).toString();
+			const tokenType = 'bracket' + (pair[0] % 5).toString();
 			result.push({
 				line: pair[1],
 				startCharacter: pair[2],
@@ -233,7 +233,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const functions = this._getConfigSet('functions');
 		const semantics = this._getConfigSet('semantics');
 
-		const operatorPattern = /([+\-*/%=!&|^]+|==|!=|>=|<=|&&|\|\||<<|>>|\+\+|--)/g;
+		const operatorPattern = /([+\-*/%<=>!&|^]+|==|!=|>=|<=|&&|\|\||<<|>>|\+\+|--)/g;
 		const keywordPattern = new RegExp(`\\b(${Array.from(keywords).join('|')})\\b|#include`, 'g');
 		const typePattern = new RegExp(`\\b(${Array.from(types).join('|')})\\b`, 'g');
 		const functionPattern = new RegExp(`\\b(${Array.from(functions).join('|')})\\b`, 'g');
@@ -260,7 +260,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 			let tokenType = '';
 			if (operatorPattern.test(commentLine)) {
 				tokenType = 'operator';
-			} else if (keywords.has(commentLine) || commentLine == "#include") {
+			} else if (keywords.has(commentLine) || commentLine == '#include') {
 				tokenType = 'keyword';
 			} else if (types.has(commentLine)) {
 				tokenType = 'type';
@@ -270,13 +270,16 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 				tokenType = 'semantic';
 			}
 
-			result.push({
-				line: startLine,
-				startCharacter: startCharacter,
-				length: commentLine.length,
-				tokenType: tokenType,
-				tokenModifiers: []
-			});
+			if (tokenType.length !== 0)
+			{
+				result.push({
+					line: startLine,
+					startCharacter: startCharacter,
+					length: commentLine.length,
+					tokenType: tokenType,
+					tokenModifiers: []
+				});
+			}
 		}
 	}
 }
