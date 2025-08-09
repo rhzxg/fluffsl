@@ -234,16 +234,18 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const types = this._getConfigSet('types');
 		const functions = this._getConfigSet('functions');
 		const semantics = this._getConfigSet('semantics');
+		const macros = this._getConfigSet('macros');
 
 		const operatorPattern = /([+\-*/%<=>!&|^]+|==|!=|>=|<=|&&|\|\||<<|>>|\+\+|--)/g;
 		const directivePattern = new RegExp(`(${Array.from(directives).join('|')})`, 'g');
 		const keywordPattern = new RegExp(`\\b(${Array.from(keywords).join('|')})\\b`, 'g');
 		const typePattern = new RegExp(`\\b(${Array.from(types).join('|')})\\b`, 'g');
 		const functionPattern = new RegExp(`\\b(${Array.from(functions).join('|')})\\b`, 'g');
-		const semanticsPattern = new RegExp(`\\b(${Array.from(semantics).join('|')})\\b`, 'g');
+		const semanticPattern = new RegExp(`\\b(${Array.from(semantics).join('|')})\\b`, 'g');
+		const macroPattern = new RegExp(`\\b(${Array.from(macros).join('|')})\\b`, 'g');
 
 		const combinedPattern = new RegExp(
-			`(${operatorPattern.source}|${directivePattern.source}|${keywordPattern.source}|${typePattern.source}|${functionPattern.source}|${semanticsPattern.source})`,
+			`(${operatorPattern.source}|${directivePattern.source}|${keywordPattern.source}|${typePattern.source}|${functionPattern.source}|${semanticPattern.source}|${macroPattern.source})`,
 			'g'
 		);
 
@@ -273,6 +275,8 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 				tokenType = 'function';
 			} else if (semantics.has(commentLine)) {
 				tokenType = 'semantic';
+			} else if (macros.has(commentLine)) {
+				tokenType = 'macro';
 			}
 
 			if (tokenType.length !== 0) {

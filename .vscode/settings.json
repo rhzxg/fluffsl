@@ -9,11 +9,17 @@
 			"type": {
 				"foreground": "#0000ff"
 			},
+			"function": {
+				"foreground": "#880000"
+			},
+			"macro": {
+				"foreground": "#6f008a"
+			},
 			"semantic": {
-				"foreground": "#00008b"
+				"foreground": "#6f008a"
 			},
 			"keyword": {
-				"foreground": "#6f008a"
+				"foreground": "#c100db"
 			},
 			"bracket0": {
 				"foreground": "#986f0d"
@@ -38,29 +44,44 @@
 		"#error", "#warning", "#line", "#pragma",
 	],
 	"fluffsl.keywords": [
-		"STRUCT", "DATA", "INIT_MAIN", "RETURN",
 		"if", "else", "for", "while", "do",
 		"continue", "break", "discard"
 	],
 	"fluffsl.types": [
-		"void", "float", "float2", "float3", "float4",
-		"int", "int2", "int3", "int4",
-		"uint", "uint2", "uint3", "uint4",
-		"bool", "float4x4", "float3x3",
+		"void", "bool",
+		"int4", "int3", "int2", "int",
+		"uint4", "uint3", "uint2", "uint",
+		"float4", "float3", "float2", "float",
+		"f2x2", "f3x2", "f3x3", "f4x4",
+		"float4x4", "float3x3",
 		"texture2D", "sampler2D"
 	],
 	"fluffsl.functions": [
 		"mul", "normalize", "dot", "max", "min", "length",
 		"texture", "abs", "sin", "cos", "tan", "pow", "sqrt",
-		"Get", "VS_MAIN"
+		"f3", "f4",
+		"setElem", "Identity", "StoreByte",
+		"Get", "VS_MAIN", "PS_MAIN", "CS_MAIN", "RETURN"
 	],
 	"fluffsl.semantics": [
-		"RES", "TEX", "TEXCOORD",
-		"POSITION", "NORMAL", "COLOR",
-		"CBUFFER", "BUFFER", 
-		"SV_Position", "SV_InstanceID", "SV_PrimitiveID", 
-		"SV_Target","SV_Target1", "SV_Target2", "SV_Target3",
-		"SV_Target4","SV_Target5", "SV_Target6", "SV_Target7",  
+		"POSITION", "NORMAL", "COLOR", "CBUFFER", "BUFFER",
+		"SV_Position", "SV_Depth", "SV_InstanceID", "SV_PrimitiveID",
+		"SV_GroupID", "SV_DispatchThreadID", "SV_GroupThreadID",
+		"SV_SampleIndex", "SV_GroupIndex", "SV_DomainLocation",
+		"SV_Target", "SV_Target1", "SV_Target2", "SV_Target3",
+		"SV_Target4", "SV_Target5", "SV_Target6", "SV_Target7",
 		"SV_SampleMask", "SV_ClipDistance", "SV_CullDistance"
+	],
+	"fluffsl.macros": [
+		"INIT_MAIN", "INIT_RS_DESC", "NUM_THREADS",
+		"ROOT_SIGNATURE",
+		"STRUCT", "DATA", "RES", "TEX", "TEXCOORD",
+		"DECL_SAMPLER", "DECL_CBUFFER", "DECL_BUFFER",
+		"DECL_RWBUFFER", "DECL_TEXTURE", "DECL_RWTEXTURE",
+		"DECL_ARRAY_BUFFERS", "DECL_ARRAY_TEXTURES",
+		"DECL_ARRAY_RWTEXTURES", "DECL_ARRAY_RWBUFFERS",
+		"BEGIN_SRT", "END_SRT", "BEGIN_SRT_SET", "END_SRT_SET",
+		"UPDATE_FREQ_NONE", "UPDATE_FREQ_PER_FRAME", "UPDATE_FREQ_PER_DRAW",
+		"UPDATE_FREQ_PER_PASS", "UPDATE_FREQ_DYNAMIC", "UPDATE_FREQ_IMMUTABLE"
 	]
 }
