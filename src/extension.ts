@@ -65,8 +65,8 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 	private _parseText(text: string): IParsedToken[] {
 		const result: IParsedToken[] = [];
 		const tokenized = new MultiMap(); // [row, [startIndex, endInedx]]
-		this._tokenizeComments(text, result, tokenized);
 		this._tokenizeStrings(text, result, tokenized);
+		this._tokenizeComments(text, result, tokenized);
 		this._tokenizeBrackets(text, result, tokenized);
 		this._tokenizeRestSyntax(text, result, tokenized);
 		return result;
@@ -76,6 +76,34 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const config = vscode.workspace.getConfiguration();
 		const arr = config.get<string[]>(`fluffsl.${key}`, []);
 		return new Set(arr);
+	}
+
+	private _tokenizeStrings(text: string, result: IParsedToken[], tokenized: MultiMap) {
+		// tokenize [//]
+		const lineCommentRegex = /"[^"]*"/g;
+		let match: RegExpExecArray | null;
+		while ((match = lineCommentRegex.exec(text)) !== null) {
+			const startOffset = match.index;
+			const beforeStart = text.slice(0, startOffset);
+			const lastLine = text.lastIndexOf('\n', startOffset);
+			const startLine = beforeStart.split(/\r?\n/).length - 1;
+			const commentLine = match[0];
+			const startCharacter = startOffset - lastLine - 1;
+
+			if (tokenized.has(startLine, [startCharacter, startCharacter + commentLine.length])) {
+				continue;
+			}
+
+			result.push({
+				line: startLine,
+				startCharacter: startCharacter,
+				length: commentLine.length,
+				tokenType: "string",
+				tokenModifiers: []
+			});
+
+			tokenized.add(startLine, [startCharacter, startCharacter + commentLine.length]);
+		}
 	}
 
 	private _tokenizeComments(text: string, result: IParsedToken[], tokenized: MultiMap) {
@@ -125,34 +153,6 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 				startCharacter: startCharacter,
 				length: commentLine.length,
 				tokenType: "comment",
-				tokenModifiers: []
-			});
-
-			tokenized.add(startLine, [startCharacter, startCharacter + commentLine.length]);
-		}
-	}
-
-	private _tokenizeStrings(text: string, result: IParsedToken[], tokenized: MultiMap) {
-		// tokenize [//]
-		const lineCommentRegex = /"[^"]*"/g;
-		let match: RegExpExecArray | null;
-		while ((match = lineCommentRegex.exec(text)) !== null) {
-			const startOffset = match.index;
-			const beforeStart = text.slice(0, startOffset);
-			const lastLine = text.lastIndexOf('\n', startOffset);
-			const startLine = beforeStart.split(/\r?\n/).length - 1;
-			const commentLine = match[0];
-			const startCharacter = startOffset - lastLine - 1;
-
-			if (tokenized.has(startLine, [startCharacter, startCharacter + commentLine.length])) {
-				continue;
-			}
-
-			result.push({
-				line: startLine,
-				startCharacter: startCharacter,
-				length: commentLine.length,
-				tokenType: "string",
 				tokenModifiers: []
 			});
 
