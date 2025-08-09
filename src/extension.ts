@@ -66,6 +66,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const result: IParsedToken[] = [];
 		const tokenized = new MultiMap(); // [row, [startIndex, endInedx]]
 		this._tokenizeComments(text, result, tokenized);
+		this._tokenizeStrings(text, result, tokenized);
 		this._tokenizeBrackets(text, result, tokenized);
 		this._tokenizeRestSyntax(text, result, tokenized);
 		return result;
@@ -124,6 +125,34 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 				startCharacter: startCharacter,
 				length: commentLine.length,
 				tokenType: "comment",
+				tokenModifiers: []
+			});
+
+			tokenized.add(startLine, [startCharacter, startCharacter + commentLine.length]);
+		}
+	}
+
+	private _tokenizeStrings(text: string, result: IParsedToken[], tokenized: MultiMap) {
+		// tokenize [//]
+		const lineCommentRegex = /"[^"]*"/g;
+		let match: RegExpExecArray | null;
+		while ((match = lineCommentRegex.exec(text)) !== null) {
+			const startOffset = match.index;
+			const beforeStart = text.slice(0, startOffset);
+			const lastLine = text.lastIndexOf('\n', startOffset);
+			const startLine = beforeStart.split(/\r?\n/).length - 1;
+			const commentLine = match[0];
+			const startCharacter = startOffset - lastLine - 1;
+
+			if (tokenized.has(startLine, [startCharacter, startCharacter + commentLine.length])) {
+				continue;
+			}
+
+			result.push({
+				line: startLine,
+				startCharacter: startCharacter,
+				length: commentLine.length,
+				tokenType: "string",
 				tokenModifiers: []
 			});
 
