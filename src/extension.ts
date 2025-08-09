@@ -7,7 +7,8 @@ const legend = (function () {
 	const tokenTypesLegend = [
 		'comment', 'string', 'keyword', 'number', 'regexp', 'operator', 'namespace',
 		'type', 'struct', 'class', 'interface', 'enum', 'typeParameter', 'function',
-		'method', 'decorator', 'macro', 'variable', 'parameter', 'property', 'label'
+		'method', 'decorator', 'macro', 'variable', 'parameter', 'property', 'label',
+		'bracket0', 'bracket1', 'bracket2', 'bracket3', 'bracket4',
 	];
 	tokenTypesLegend.forEach((tokenType, index) => tokenTypes.set(tokenType, index));
 
@@ -64,7 +65,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const result: IParsedToken[] = [];
 		const tokenized = new Set<number>();
 		this._tokenizeComments(text, result, tokenized);
-		this._tokenizeExceptComments(text, result, tokenized);
+		this._tokenizeBrackets(text, result, tokenized);
 		return result;
 	}
 
@@ -126,10 +127,70 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		}
 	}
 
-	private _tokenizeExceptComments(text: string, result: IParsedToken[], tokenized: Set<number>) {
-		const keywords = this._getConfigSet('keywords');
-		const types = this._getConfigSet('types');
-		const functions = this._getConfigSet('functions');
-		const semantics = this._getConfigSet('semantics');
+	private _tokenizeBrackets(text: string, result: IParsedToken[], tokenized: Set<number>) {
+		type Tuple = [number, number];  // [row, indexInRow]
+		const stackParentheses: Tuple[] = [];
+		const stackBrackets: Tuple[] = [];
+		const stackBraces: Tuple[] = [];
+		const brackets = new Set<string>(['(', ')', '[', ']', '{', '}']);
+
+		// [nestedIndex, leftBracketRow, leftBracketIndexInRow, rightBracketRow, rightBracketIndexInRow]
+		type Paired = [number, number, number, number, number]
+		const paired: Paired[] = [];
+		const commentLines = text.split(/\r?\n/);
+		for (let row = 0; row < commentLines.length; ++row) {
+			if (tokenized.has(row)) {
+				continue;
+			}
+
+			const commentLine = commentLines[row];
+			for (let index = 0; index < commentLine.length; ++index) {
+				const c = commentLine[index];
+				if (!brackets.has(c)) {
+					continue;
+				}
+
+				if (c === '(') {
+					stackParentheses.push([row, index]);
+				} else if (c === ')') {
+					const last = stackParentheses.pop();
+					if (last) {
+						paired.push([stackParentheses.length, last[0], last[1], row, index]);
+					}
+				} else if (c === '[') {
+					stackBrackets.push([row, index]);
+				} else if (c === ']') {
+					const last = stackBrackets.pop();
+					if (last) {
+						paired.push([stackBrackets.length, last[0], last[1], row, index]);
+					}
+				} else if (c === '{') {
+					stackBraces.push([row, index]);
+				} else if (c === '}') {
+					const last = stackBraces.pop();
+					if (last) {
+						paired.push([stackBraces.length, last[0], last[1], row, index]);
+					}
+				}
+			}
+		}
+
+		paired.forEach((pair) => {
+			const tokenType = "bracket" + (pair[0] % 5).toString();
+			result.push({
+				line: pair[1],
+				startCharacter: pair[2],
+				length: 1,
+				tokenType: tokenType,
+				tokenModifiers: []
+			});
+			result.push({
+				line: pair[3],
+				startCharacter: pair[4],
+				length: 1,
+				tokenType: tokenType,
+				tokenModifiers: []
+			});
+		});
 	}
 }

@@ -2,7 +2,23 @@
 	"editor.insertSpaces": false,
 	"editor.semanticTokenColorCustomizations": {
 		"enabled": true, // enable for all themes
-		"rules": {}
+		"rules": {
+			"bracket0": {
+				"foreground": "#986f0d"
+			},
+			"bracket1": {
+				"foreground": "#007575"
+			},
+			"bracket2": {
+				"foreground": "#0078d4"
+			},
+			"bracket3": {
+				"foreground": "#2d0097"
+			},
+			"bracket4": {
+				"foreground": "#cc0073"
+			},
+		}
 	},
 
 	"fluffsl.keywords": [
