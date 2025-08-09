@@ -82,7 +82,9 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		while ((match = blockCommentRegex.exec(text)) !== null) {
 			const startOffset = match.index;
 			const beforeStart = text.slice(0, startOffset);
+			const lastLine = text.lastIndexOf('\n', startOffset);
 			const startLine = beforeStart.split(/\r?\n/).length - 1;
+			const startCharacter = startOffset - lastLine - 1;
 
 			const commentLines = match[0].split(/\r?\n/);
 			for (let i = 0; i < commentLines.length; i++) {
@@ -91,7 +93,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 
 				result.push({
 					line: line,
-					startCharacter: 0,
+					startCharacter: startCharacter,
 					length: lineText.length,
 					tokenType: "comment",
 					tokenModifiers: []
