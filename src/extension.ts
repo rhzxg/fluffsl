@@ -204,7 +204,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const functions = this._getConfigSet('functions');
 		const semantics = this._getConfigSet('semantics');
 
-		const operatorPattern = /([+\-*/%=!&|^]+|==|!=|>=|<=|&&|\|\||<<|>>|\+\+|--)/;
+		const operatorPattern = /([+\-*/%=!&|^]+|==|!=|>=|<=|&&|\|\||<<|>>|\+\+|--)/g;
 		const keywordPattern = new RegExp(`\\b(${Array.from(keywords).join('|')})\\b|#include`, 'g');
 		const typePattern = new RegExp(`\\b(${Array.from(types).join('|')})\\b`, 'g');
 		const functionPattern = new RegExp(`\\b(${Array.from(functions).join('|')})\\b`, 'g');
