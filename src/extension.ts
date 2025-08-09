@@ -9,7 +9,7 @@ const legend = (function () {
 		'comment', 'string', 'keyword', 'number', 'regexp', 'operator', 'namespace',
 		'type', 'struct', 'class', 'interface', 'enum', 'typeParameter', 'function',
 		'method', 'decorator', 'macro', 'variable', 'parameter', 'property', 'label',
-		'bracket0', 'bracket1', 'bracket2', 'bracket3', 'bracket4',
+		'semantic', 'bracket0', 'bracket1', 'bracket2', 'bracket3', 'bracket4',
 	];
 	tokenTypesLegend.forEach((tokenType, index) => tokenTypes.set(tokenType, index));
 
@@ -67,6 +67,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const tokenized = new MultiMap(); // [row, [startIndex, endInedx]]
 		this._tokenizeComments(text, result, tokenized);
 		this._tokenizeBrackets(text, result, tokenized);
+		this._tokenizeRestSyntax(text, result, tokenized);
 		return result;
 	}
 
@@ -195,5 +196,58 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 				tokenModifiers: []
 			});
 		});
+	}
+
+	private _tokenizeRestSyntax(text: string, result: IParsedToken[], tokenized: MultiMap) {
+		const keywords = this._getConfigSet('keywords');
+		const types = this._getConfigSet('types');
+		const functions = this._getConfigSet('functions');
+		const semantics = this._getConfigSet('semantics');
+
+		const operatorPattern = /([+\-*/%=!&|^]+|==|!=|>=|<=|&&|\|\||<<|>>|\+\+|--)/;
+		const keywordPattern = new RegExp(`\\b(${Array.from(keywords).join('|')})\\b|#include`, 'g');
+		const typePattern = new RegExp(`\\b(${Array.from(types).join('|')})\\b`, 'g');
+		const functionPattern = new RegExp(`\\b(${Array.from(functions).join('|')})\\b`, 'g');
+		const semanticsPattern = new RegExp(`\\b(${Array.from(semantics).join('|')})\\b`, 'g');
+
+		const combinedPattern = new RegExp(
+			`(${operatorPattern.source}|${keywordPattern.source}|${typePattern.source}|${functionPattern.source}|${semanticsPattern.source})`,
+			'g'
+		);
+
+		let match;
+		while ((match = combinedPattern.exec(text)) !== null && match[0] !== '') {
+			const startOffset = match.index;
+			const beforeStart = text.slice(0, startOffset);
+			const lastLine = text.lastIndexOf('\n', startOffset);
+			const startLine = beforeStart.split(/\r?\n/).length - 1;
+			const commentLine = match[0];
+			const startCharacter = startOffset - lastLine - 1;
+
+			if (tokenized.has(startLine, [startCharacter, startCharacter + commentLine.length])) {
+				continue;
+			}
+
+			let tokenType = '';
+			if (operatorPattern.test(commentLine)) {
+				tokenType = 'operator';
+			} else if (keywords.has(commentLine) || commentLine == "#include") {
+				tokenType = 'keyword';
+			} else if (types.has(commentLine)) {
+				tokenType = 'type';
+			} else if (functions.has(commentLine)) {
+				tokenType = 'function';
+			} else if (semantics.has(commentLine)) {
+				tokenType = 'semantic';
+			}
+
+			result.push({
+				line: startLine,
+				startCharacter: startCharacter,
+				length: commentLine.length,
+				tokenType: tokenType,
+				tokenModifiers: []
+			});
+		}
 	}
 }

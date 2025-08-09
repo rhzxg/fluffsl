@@ -3,6 +3,15 @@
 	"editor.semanticTokenColorCustomizations": {
 		"enabled": true, // enable for all themes
 		"rules": {
+			"type": {
+				"foreground": "#0000ff"
+			},
+			"semantic": {
+				"foreground": "#00008b"
+			},
+			"keyword": {
+				"foreground": "#8f08c4"
+			},
 			"bracket0": {
 				"foreground": "#986f0d"
 			},
@@ -20,7 +29,6 @@
 			},
 		}
 	},
-
 	"fluffsl.keywords": [
 		"STRUCT", "DATA", "INIT_MAIN", "RETURN",
 		"if", "else", "for", "while", "do",
@@ -35,7 +43,8 @@
 	],
 	"fluffsl.functions": [
 		"mul", "normalize", "dot", "max", "min", "length",
-		"Get", "texture", "abs", "sin", "cos", "tan", "pow", "sqrt"
+		"texture", "abs", "sin", "cos", "tan", "pow", "sqrt",
+		"Get", "VS_MAIN"
 	],
 	"fluffsl.semantics": [
 		"POSITION", "NORMAL", "COLOR",
