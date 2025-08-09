@@ -69,7 +69,8 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		this._tokenizeStrings(text, result, tokenized);
 		this._tokenizeComments(text, result, tokenized);
 		this._tokenizeBrackets(text, result, tokenized);
-		this._tokenizeRestSyntax(text, result, tokenized);
+		this._tokenizeCommonSyntax(text, result, tokenized);
+		this._tokenizeVariables(text, result, tokenized)
 		return result;
 	}
 
@@ -228,7 +229,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		});
 	}
 
-	private _tokenizeRestSyntax(text: string, result: IParsedToken[], tokenized: MultiMap) {
+	private _tokenizeCommonSyntax(text: string, result: IParsedToken[], tokenized: MultiMap) {
 		const directives = this._getConfigSet('directives');
 		const keywords = this._getConfigSet('keywords');
 		const types = new Set<string>([...this._getConfigSet('types'), ...this._collectCustomizedTypes(text, tokenized)]);
@@ -249,7 +250,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 			'g'
 		);
 
-		let match;
+		let match: RegExpExecArray | null;
 		while ((match = combinedPattern.exec(text)) !== null && match[0] !== '') {
 			const startOffset = match.index;
 			const beforeStart = text.slice(0, startOffset);
@@ -294,7 +295,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 	private _collectCustomizedTypes(text: string, tokenized: MultiMap): Set<string> {
 		const result = new Set<string>();
 		const pattern = /(STRUCT)(\s*\()([a-zA-Z_][a-zA-Z0-9_]*)(\))/g;
-		let match;
+		let match: RegExpExecArray | null;
 		while ((match = pattern.exec(text)) !== null) {
 			const startOffset = match.index + match[1].length + match[2].length;
 			const beforeStart = text.slice(0, startOffset);
@@ -315,7 +316,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 	private _collectCustomizedMacros(text: string, tokenized: MultiMap): Set<string> {
 		const result = new Set<string>();
 		const pattern = /#(ifndef|ifdef|define)(\s+)([a-zA-Z_][a-zA-Z0-9_]*)/g;
-		let match;
+		let match: RegExpExecArray | null;
 		while ((match = pattern.exec(text)) !== null) {
 			const startOffset = match.index + match[1].length + match[2].length;
 			const beforeStart = text.slice(0, startOffset);
@@ -331,5 +332,32 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 			result.add(match[3]);
 		}
 		return result;
+	}
+
+	private _tokenizeVariables(text: string, result: IParsedToken[], tokenized: MultiMap) {
+		// tokenize [//]
+		const pattern = /[a-zA-Z_][a-zA-Z0-9_]*/g;
+		let match: RegExpExecArray | null;
+		while ((match = pattern.exec(text)) !== null) {
+			const startOffset = match.index;
+			const beforeStart = text.slice(0, startOffset);
+			const lastLine = text.lastIndexOf('\n', startOffset);
+			const startLine = beforeStart.split(/\r?\n/).length - 1;
+			const commentLine = match[0];
+			const startCharacter = startOffset - lastLine - 1;
+
+			if (tokenized.has(startLine, [startCharacter, startCharacter + commentLine.length])) {
+				continue;
+			}
+
+			result.push({
+				line: startLine,
+				startCharacter: startCharacter,
+				length: commentLine.length,
+				tokenType: 'variable',
+				tokenModifiers: []
+			});
+
+		}
 	}
 }
