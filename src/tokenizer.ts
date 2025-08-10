@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { MultiMap } from './multimap';
+import { IParsedToken, TokenCache } from './token';
 
 export function registerDocumentSemanticTokensProvider(context: vscode.ExtensionContext): void {
-	context.subscriptions.push(vscode.languages.registerDocumentSemanticTokensProvider({ language: 'fsl' }, new DocumentSemanticTokensProvider(), legend));
+	context.subscriptions.push(vscode.languages.registerDocumentSemanticTokensProvider({ language: 'fsl' }, new FSLDocumentSemanticTokensProvider(), legend));
 }
 
 const tokenTypes = new Map<string, number>();
@@ -24,20 +25,27 @@ const legend = (function () {
 	return new vscode.SemanticTokensLegend(tokenTypesLegend, tokenModifiersLegend);
 })();
 
-interface IParsedToken {
-	line: number;
-	startCharacter: number;
-	length: number;
-	tokenType: string;
-	tokenModifiers: string[];
-}
+class FSLDocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
+	private closeListener: vscode.Disposable;
 
-class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
+	constructor() {
+		this.closeListener = vscode.workspace.onDidCloseTextDocument((doc) => {
+			TokenCache.removeTokenCacheByDoc(doc.uri.fsPath);
+		});
+	}
+
+	dispose() {
+		this.closeListener.dispose();
+	}
+
 	async provideDocumentSemanticTokens(document: vscode.TextDocument, _token: vscode.CancellationToken): Promise<vscode.SemanticTokens> {
 		const allTokens = this._parseText(document.getText());
+
+		TokenCache.buildTokenCacheByDoc(document, allTokens);
+
 		const builder = new vscode.SemanticTokensBuilder();
 		allTokens.forEach((token) => {
-			builder.push(token.line, token.startCharacter, token.length, this._encodeTokenType(token.tokenType), this._encodeTokenModifiers(token.tokenModifiers));
+			builder.push(token.line, token.startIndexInLine, token.length, this._encodeTokenType(token.tokenType), this._encodeTokenModifiers(token.tokenModifiers));
 		});
 		return builder.build();
 	}
@@ -98,7 +106,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 
 			result.push({
 				line: startLine,
-				startCharacter: startCharacter,
+				startIndexInLine: startCharacter,
 				length: commentLine.length,
 				tokenType: 'string',
 				tokenModifiers: []
@@ -126,7 +134,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 
 				result.push({
 					line: line,
-					startCharacter: startCharacter,
+					startIndexInLine: startCharacter,
 					length: lineText.length,
 					tokenType: 'comment',
 					tokenModifiers: []
@@ -152,7 +160,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 
 			result.push({
 				line: startLine,
-				startCharacter: startCharacter,
+				startIndexInLine: startCharacter,
 				length: commentLine.length,
 				tokenType: 'comment',
 				tokenModifiers: []
@@ -214,14 +222,14 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 			const tokenType = 'bracket' + (pair[0] % 5).toString();
 			result.push({
 				line: pair[1],
-				startCharacter: pair[2],
+				startIndexInLine: pair[2],
 				length: 1,
 				tokenType: tokenType,
 				tokenModifiers: []
 			});
 			result.push({
 				line: pair[3],
-				startCharacter: pair[4],
+				startIndexInLine: pair[4],
 				length: 1,
 				tokenType: tokenType,
 				tokenModifiers: []
@@ -283,7 +291,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 			if (tokenType.length !== 0) {
 				result.push({
 					line: startLine,
-					startCharacter: startCharacter,
+					startIndexInLine: startCharacter,
 					length: commentLine.length,
 					tokenType: tokenType,
 					tokenModifiers: []
@@ -352,7 +360,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 
 			result.push({
 				line: startLine,
-				startCharacter: startCharacter,
+				startIndexInLine: startCharacter,
 				length: commentLine.length,
 				tokenType: 'variable',
 				tokenModifiers: []
