@@ -296,6 +296,8 @@ class FSLDocumentSemanticTokensProvider implements vscode.DocumentSemanticTokens
 					tokenType: tokenType,
 					tokenModifiers: []
 				});
+
+				tokenized.add(startLine, [startCharacter, startCharacter + commentLine.length]);
 			}
 		}
 	}
