@@ -1,6 +1,6 @@
 // multimap.ts
 export class MultiMap {
-	private map: Map<number, [number, number][]> = new Map();
+	private map = new Map<number, [number, number][]>();
 
 	add(key: number, [startIndex, endIndex]: [number, number]): void {
 		if (!this.map.has(key)) {

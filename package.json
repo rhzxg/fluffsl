@@ -4,7 +4,7 @@
 	"description": "Unofficial VSCode syntax highlighting extension for The-Forge Shading Language (FSL)",
 	"version": "0.0.1",
 	"publisher": "rhzxg",
-	"private": true,
+	"icon": "res/icon.png",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
