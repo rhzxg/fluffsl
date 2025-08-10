@@ -2,7 +2,7 @@
 	"name": "fluffsl",
 	"displayName": "fluffsl",
 	"description": "Unofficial VSCode syntax highlighting extension for The-Forge Shading Language (FSL)",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "rhzxg",
 	"icon": "res/icon.png",
 	"license": "MIT",
