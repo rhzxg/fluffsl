@@ -1,26 +1,39 @@
-# Forge Shading Language for VS Code
+<img src="./res/icon.png" width="200" alt="Icon" />
 
-基于 VS Code 官方 Language Server Protocol sample 扩展而成的 The-Forge Shading Language (FSL) 语言支持。
+# fluffsl
 
-## 能力
+Unofficial VS Code syntax highlighter for **The-Forge Shading Language (FSL)**.
 
-- FSL、HLSL 风格关键字、标量/向量/矩阵/资源类型、预处理器和 The-Forge 宏的语法高亮
-- 从 The-Forge `includes/*.h` 自动提取宏、类型和内置函数
-- `STRUCT`、`DATA`、`CBUFFER`、`PUSH_CONSTANT`、`RES` 和普通声明的容错解析
-- 递归解析 `#include` / `#import`，支持跨文件定义、声明、引用、悬停和补全
-- Document Symbols、Workspace Symbols 和 semantic tokens
-- 花括号、圆括号、方括号配对、自动闭合、折叠和基础不匹配诊断
+This extension provides basic grammar highlighting for `.fsl` files used in [The Forge](https://github.com/ConfettiFX/The-Forge) rendering framework, making shader code more readable and easier to write.
 
-## 开发
+## ✨ Features
+- 🎨 Syntax highlighting for keywords, types, macros, and comments.
+- 📂 Automatic detection of `.fsl` files.
+- 🪶 Lightweight and fast — no extra dependencies.
+- 📜 Easy to extend with custom grammar rules.
 
-```powershell
-npm install
-npm run compile
-npm run lint
+## 📦 Installation
+1. Download the `.vsix` file from the [Releases](./releases) page.
+2. Install it via command line:
+   ```bash
+   code --install-extension fluffsl-x.x.x.vsix
+3. Install it via VS Code extension market:
+   Search fluffsl and install.
+## 🔧 Building the Extension
+- To compile the extension and run it locally, follow these steps:
+1. Run the following command to install all required Node.js dependencies:
+```bash
+   npm install
 ```
 
-在 VS Code 中按 `F5` 启动 Extension Development Host，然后打开任意 `.fsl` 或 `.h.fsl` 文件。
+2. After the dependencies are installed, you need to compile the TypeScript code:
+```bash
+   npm run compile
+```
 
-扩展默认会检测本机 `F:/The-Forge1/Common_3/Tools/ForgeShadingLanguage`。其他环境请设置 `fsl.forgeRoot`，或在启动 VS Code 前设置 `FSL_ROOT`。路径应指向包含 `includes`、`generators` 和 `fsl.py` 的 `ForgeShadingLanguage` 目录。
+3. To test the extension locally, use the following command to open a new instance of VS Code with your extension:
+``` bash
+   F5
+```
 
-解析器不会要求代码能够成功编译；未完成函数、宏式声明和条件编译分支仍可参与符号索引，适合编辑过程中的不完整代码。
+​	This will start a new VS Code window (called the Extension Development Host) with the extension loaded, allowing you to test its functionality.
