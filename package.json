@@ -1,15 +1,16 @@
 {
-	"name": "lsp-sample",
-	"description": "A language server example",
-	"author": "Microsoft Corporation",
+	"name": "fluffsl",
+	"displayName": "fluffsl",
+	"description": "Unofficial VSCode syntax highlighting extension for The-Forge Shading Language (FSL)",
+	"author": "rhzxg",
 	"license": "MIT",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-extension-samples"
+		"url": "https://github.com/rhzxg/fluffsl.git"
 	},
-	"publisher": "vscode-samples",
-	"categories": [],
+	"publisher": "fluffsl",
+	"categories": ["Programming Languages"],
 	"keywords": [
 		"multi-root ready"
 	],
@@ -17,21 +18,39 @@
 		"vscode": "^1.100.0"
 	},
 	"activationEvents": [
-		"onLanguage:plaintext"
+		"onLanguage:fsl"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
+		"languages": [{
+			"id": "fsl",
+			"aliases": ["The-Forge Shading Language", "FSL"],
+			"extensions": [".fsl"],
+			"configuration": "./language-configuration.json"
+		}],
+		"grammars": [{
+			"language": "fsl",
+			"scopeName": "source.fsl",
+			"path": "./syntaxes/fsl.tmLanguage.json"
+		}],
 		"configuration": {
 			"type": "object",
-			"title": "Example configuration",
+			"title": "The-Forge Shading Language",
 			"properties": {
-				"languageServerExample.maxNumberOfProblems": {
-					"scope": "resource",
-					"type": "number",
-					"default": 100,
-					"description": "Controls the maximum number of problems produced by the server."
+				"fsl.forgeRoot": {
+					"scope": "machine-overridable",
+					"type": "string",
+					"default": "",
+					"description": "Path to Common_3/Tools/ForgeShadingLanguage. Built-in functions, macros, and types are extracted from its include headers."
 				},
-				"languageServerExample.trace.server": {
+				"fsl.includePaths": {
+					"scope": "resource",
+					"type": "array",
+					"items": { "type": "string" },
+					"default": [],
+					"description": "Additional directories searched for FSL #include and #import files."
+				},
+				"fsl.trace.server": {
 					"scope": "window",
 					"type": "string",
 					"enum": [
@@ -51,7 +70,7 @@
 		"watch": "tsc -b -w",
 		"lint": "eslint",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
-		"test": "sh ./scripts/e2e.sh"
+		"test": "npm run compile && node ./client/out/test/runTest.js"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.13.0",

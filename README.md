@@ -1,37 +1,26 @@
-# LSP Example
+# Forge Shading Language for VS Code
 
-Heavily documented sample code for https://code.visualstudio.com/api/language-extensions/language-server-extension-guide
+基于 VS Code 官方 Language Server Protocol sample 扩展而成的 The-Forge Shading Language (FSL) 语言支持。
 
-## Functionality
+## 能力
 
-This Language Server works for plain text file. It has the following language features:
-- Completions
-- Diagnostics regenerated on each file change or configuration change
+- FSL、HLSL 风格关键字、标量/向量/矩阵/资源类型、预处理器和 The-Forge 宏的语法高亮
+- 从 The-Forge `includes/*.h` 自动提取宏、类型和内置函数
+- `STRUCT`、`DATA`、`CBUFFER`、`PUSH_CONSTANT`、`RES` 和普通声明的容错解析
+- 递归解析 `#include` / `#import`，支持跨文件定义、声明、引用、悬停和补全
+- Document Symbols、Workspace Symbols 和 semantic tokens
+- 花括号、圆括号、方括号配对、自动闭合、折叠和基础不匹配诊断
 
-It also includes an End-to-End test.
+## 开发
 
-## Structure
-
-```
-.
-├── client // Language Client
-│   ├── src
-│   │   ├── test // End to End tests for Language Client / Server
-│   │   └── extension.ts // Language Client entry point
-├── package.json // The extension manifest.
-└── server // Language Server
-    └── src
-        └── server.ts // Language Server entry point
+```powershell
+npm install
+npm run compile
+npm run lint
 ```
 
-## Running the Sample
+在 VS Code 中按 `F5` 启动 Extension Development Host，然后打开任意 `.fsl` 或 `.h.fsl` 文件。
 
-- Run `npm install` in this folder. This installs all necessary npm modules in both the client and server folder
-- Open VS Code on this folder.
-- Press Ctrl+Shift+B to start compiling the client and server in [watch mode](https://code.visualstudio.com/docs/editor/tasks#:~:text=The%20first%20entry%20executes,the%20HelloWorld.js%20file.).
-- Switch to the Run and Debug View in the Sidebar (Ctrl+Shift+D).
-- Select `Launch Client` from the drop down (if it is not already).
-- Press ▷ to run the launch config (F5).
-- In the [Extension Development Host](https://code.visualstudio.com/api/get-started/your-first-extension#:~:text=Then%2C%20inside%20the%20editor%2C%20press%20F5.%20This%20will%20compile%20and%20run%20the%20extension%20in%20a%20new%20Extension%20Development%20Host%20window.) instance of VSCode, open a document in 'plain text' language mode.
-  - Type `j` or `t` to see `Javascript` and `TypeScript` completion.
-  - Enter text content such as `AAA aaa BBB`. The extension will emit diagnostics for all words in all-uppercase.
+扩展默认会检测本机 `F:/The-Forge1/Common_3/Tools/ForgeShadingLanguage`。其他环境请设置 `fsl.forgeRoot`，或在启动 VS Code 前设置 `FSL_ROOT`。路径应指向包含 `includes`、`generators` 和 `fsl.py` 的 `ForgeShadingLanguage` 目录。
+
+解析器不会要求代码能够成功编译；未完成函数、宏式声明和条件编译分支仍可参与符号索引，适合编辑过程中的不完整代码。

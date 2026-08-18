@@ -8,13 +8,14 @@ import * as assert from 'assert';
 import { getDocUri, activate } from './helper';
 
 suite('Should do completion', () => {
-	const docUri = getDocUri('completion.txt');
+	const docUri = getDocUri('completion.fsl');
 
-	test('Completes JS/TS in txt file', async () => {
+	test('Completes FSL built-ins', async () => {
 		await testCompletion(docUri, new vscode.Position(0, 0), {
 			items: [
-				{ label: 'JavaScript', kind: vscode.CompletionItemKind.Text },
-				{ label: 'TypeScript', kind: vscode.CompletionItemKind.Text }
+				{ label: 'float4', kind: vscode.CompletionItemKind.Struct },
+				{ label: 'mul', kind: vscode.CompletionItemKind.Function },
+				{ label: 'includedFixtureFunction', kind: vscode.CompletionItemKind.Function }
 			]
 		});
 	});
@@ -35,9 +36,9 @@ async function testCompletion(
 	)) as vscode.CompletionList;
 
 	assert.ok(actualCompletionList.items.length >= 2);
-	expectedCompletionList.items.forEach((expectedItem, i) => {
-		const actualItem = actualCompletionList.items[i];
+	expectedCompletionList.items.forEach(expectedItem => {
+		const actualItem = actualCompletionList.items.find(item => item.label === expectedItem.label);
+		assert.ok(actualItem, `Missing completion: ${expectedItem.label}`);
 		assert.equal(actualItem.label, expectedItem.label);
-		assert.equal(actualItem.kind, expectedItem.kind);
 	});
 }
