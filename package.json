@@ -1,231 +1,85 @@
 {
-    "name": "fluffsl",
-    "displayName": "fluffsl",
-    "description": "Unofficial VSCode syntax highlighting extension for The-Forge Shading Language (FSL)",
-    "version": "1.0.4",
-    "publisher": "rhzxg",
-    "icon": "res/icon.png",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/rhzxg/fluffsl.git"
-    },
-    "engines": {
-        "vscode": "^1.100.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onLanguage:fsl"
-    ],
-    "main": "./out/extension.js",
-    "contributes": {
-        "languages": [
-            {
-                "id": "fsl",
-                "extensions": [
-                    ".fsl"
-                ],
-                "aliases": [
-                    "FSL"
-                ]
-            }
-        ],
-        "configuration": {
-            "title": "FluffSL Settings",
-            "properties": {
-                "fluffsl.directives": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [
-                        "#include",
-                        "#define",
-                        "#undef",
-                        "#ifndef",
-                        "#ifdef",
-                        "#if",
-                        "#elif",
-                        "#else",
-                        "#endif",
-                        "#error",
-                        "#warning",
-                        "#line",
-                        "#pragma"
-                    ],
-                    "description": "Preprocessor directives."
-                },
-                "fluffsl.keywords": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [
-                        "if",
-                        "else",
-                        "for",
-                        "while",
-                        "do",
-                        "continue",
-                        "break",
-                        "discard"
-                    ],
-                    "description": "Language keywords."
-                },
-                "fluffsl.types": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [
-                        "void",
-                        "bool",
-                        "int4",
-                        "int3",
-                        "int2",
-                        "int",
-                        "uint4",
-                        "uint3",
-                        "uint2",
-                        "uint",
-                        "float4",
-                        "float3",
-                        "float2",
-                        "float",
-                        "f2x2",
-                        "f3x2",
-                        "f3x3",
-                        "f4x4",
-                        "float4x4",
-                        "float3x3",
-                        "texture2D",
-                        "sampler2D"
-                    ],
-                    "description": "Built-in types."
-                },
-                "fluffsl.functions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [
-                        "mul",
-                        "normalize",
-                        "dot",
-                        "max",
-                        "min",
-                        "length",
-                        "texture",
-                        "abs",
-                        "sin",
-                        "cos",
-                        "tan",
-                        "pow",
-                        "sqrt",
-                        "f3",
-                        "f4",
-                        "setElem",
-                        "Identity",
-                        "StoreByte",
-                        "Get",
-                        "VS_MAIN",
-                        "PS_MAIN",
-                        "CS_MAIN",
-                        "RETURN"
-                    ],
-                    "description": "Built-in functions."
-                },
-                "fluffsl.semantics": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [
-                        "POSITION",
-                        "NORMAL",
-                        "COLOR",
-                        "CBUFFER",
-                        "BUFFER",
-                        "SV_Position",
-                        "SV_Depth",
-                        "SV_InstanceID",
-                        "SV_PrimitiveID",
-                        "SV_GroupID",
-                        "SV_DispatchThreadID",
-                        "SV_GroupThreadID",
-                        "SV_SampleIndex",
-                        "SV_GroupIndex",
-                        "SV_DomainLocation",
-                        "SV_Target",
-                        "SV_Target1",
-                        "SV_Target2",
-                        "SV_Target3",
-                        "SV_Target4",
-                        "SV_Target5",
-                        "SV_Target6",
-                        "SV_Target7",
-                        "SV_SampleMask",
-                        "SV_ClipDistance",
-                        "SV_CullDistance"
-                    ],
-                    "description": "Semantic names."
-                },
-                "fluffsl.macros": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [
-                        "INIT_MAIN",
-                        "INIT_RS_DESC",
-                        "NUM_THREADS",
-                        "ROOT_SIGNATURE",
-                        "STRUCT",
-                        "DATA",
-                        "RES",
-                        "TEX",
-                        "TEXCOORD",
-                        "DECL_SAMPLER",
-                        "DECL_CBUFFER",
-                        "DECL_BUFFER",
-                        "DECL_RWBUFFER",
-                        "DECL_TEXTURE",
-                        "DECL_RWTEXTURE",
-                        "DECL_ARRAY_BUFFERS",
-                        "DECL_ARRAY_TEXTURES",
-                        "DECL_ARRAY_RWTEXTURES",
-                        "DECL_ARRAY_RWBUFFERS",
-                        "BEGIN_SRT",
-                        "END_SRT",
-                        "BEGIN_SRT_SET",
-                        "END_SRT_SET",
-                        "UPDATE_FREQ_NONE",
-                        "UPDATE_FREQ_PER_FRAME",
-                        "UPDATE_FREQ_PER_DRAW",
-                        "UPDATE_FREQ_PER_PASS",
-                        "UPDATE_FREQ_DYNAMIC",
-                        "UPDATE_FREQ_IMMUTABLE"
-                    ],
-                    "description": "Predefined macros."
-                }
-            }
-        }
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "lint": "eslint",
-        "watch": "tsc -watch -p ./"
-    },
-    "devDependencies": {
-        "@eslint/js": "^9.13.0",
-        "@stylistic/eslint-plugin": "^2.9.0",
-        "@types/node": "^22",
-        "@types/vscode": "^1.100.0",
-        "eslint": "^9.13.0",
-        "typescript": "^5.9.2",
-        "typescript-eslint": "^8.39.0"
-    }
+	"name": "fluffsl",
+	"displayName": "fluffsl",
+	"description": "Unofficial VSCode syntax highlighting extension for The-Forge Shading Language (FSL)",
+	"author": "rhzxg",
+	"license": "MIT",
+	"version": "2.0.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rhzxg/fluffsl.git"
+	},
+	"publisher": "fluffsl",
+	"categories": ["Programming Languages"],
+	"keywords": [
+		"multi-root ready"
+	],
+	"engines": {
+		"vscode": "^1.100.0"
+	},
+	"activationEvents": [
+		"onLanguage:fsl"
+	],
+	"main": "./client/out/extension",
+	"contributes": {
+		"languages": [{
+			"id": "fsl",
+			"aliases": ["The-Forge Shading Language", "FSL"],
+			"extensions": [".fsl"],
+			"configuration": "./language-configuration.json"
+		}],
+		"grammars": [{
+			"language": "fsl",
+			"scopeName": "source.fsl",
+			"path": "./syntaxes/fsl.tmLanguage.json"
+		}],
+		"configuration": {
+			"type": "object",
+			"title": "The-Forge Shading Language",
+			"properties": {
+				"fsl.forgeRoot": {
+					"scope": "machine-overridable",
+					"type": "string",
+					"default": "",
+					"description": "Path to Common_3/Tools/ForgeShadingLanguage. Built-in functions, macros, and types are extracted from its include headers."
+				},
+				"fsl.includePaths": {
+					"scope": "resource",
+					"type": "array",
+					"items": { "type": "string" },
+					"default": [],
+					"description": "Additional directories searched for FSL #include and #import files."
+				},
+				"fsl.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "off",
+					"description": "Traces the communication between VS Code and the language server."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"lint": "eslint",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+		"test": "npm run compile && node ./client/out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.13.0",
+		"@stylistic/eslint-plugin": "^2.9.0",
+		"@types/mocha": "^10.0.6",
+		"@types/node": "^22",
+		"eslint": "^9.13.0",
+		"mocha": "^10.3.0",
+		"typescript": "^5.9.2",
+		"typescript-eslint": "^8.39.0"
+	}
 }

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Forge Shading Language",
+  "scopeName": "source.fsl",
+  "patterns": [
+    { "include": "#comments" }, { "include": "#preprocessor" }, { "include": "#strings" },
+    { "name": "constant.numeric.fsl", "match": "\\b(?:0[xX][0-9A-Fa-f]+|(?:\\d+\\.?\\d*|\\.\\d+)(?:[eE][+-]?\\d+)?)[uUlLfF]*\\b" },
+    { "name": "keyword.control.fsl", "match": "\\b(?:if|else|for|while|do|switch|case|default|break|continue|return|discard)\\b" },
+    { "name": "storage.modifier.fsl", "match": "\\b(?:const|static|inline|extern|in|out|inout|uniform|shared|groupshared|precise|nointerpolation)\\b" },
+    { "name": "storage.type.fsl", "match": "\\b(?:void|bool[2-4]?|int[2-4]?|uint[2-4]?|float(?:[2-4](?:x[2-4])?)?|half[2-4]?|short[2-4]?|ushort[2-4]?|Texture(?:1D|2D|2DArray|3D|Cube)|RWTexture(?:1D|2D|2DArray|3D)|Sampler(?:Comparison)?State|ByteBuffer|RWByteBuffer)\\b" },
+    { "name": "support.function.macro.fsl", "match": "\\b(?:STRUCT|DATA|CBUFFER|PUSH_CONSTANT|RES|INIT_MAIN|RETURN|VS_MAIN|PS_MAIN|CS_MAIN|TC_MAIN|TE_MAIN)\\b" },
+    { "name": "entity.name.function.fsl", "match": "\\b[A-Za-z_]\\w*(?=\\s*\\()" }
+  ],
+  "repository": {
+    "comments": { "patterns": [
+      { "name": "comment.line.double-slash.fsl", "begin": "//", "end": "$" },
+      { "name": "comment.block.fsl", "begin": "/\\*", "end": "\\*/" }
+    ] },
+    "strings": { "patterns": [
+      { "name": "string.quoted.double.fsl", "begin": "\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.fsl", "match": "\\\\." }] },
+      { "name": "string.quoted.single.fsl", "begin": "'", "end": "'", "patterns": [{ "name": "constant.character.escape.fsl", "match": "\\\\." }] }
+    ] },
+    "preprocessor": { "patterns": [
+      { "name": "meta.preprocessor.fsl", "begin": "^\\s*(#)\\s*(define)\\s+([A-Za-z_]\\w*)", "beginCaptures": { "1": {"name":"punctuation.definition.directive.fsl"}, "2":{"name":"keyword.control.directive.define.fsl"}, "3":{"name":"entity.name.function.preprocessor.fsl"} }, "end": "$" },
+      { "name": "meta.preprocessor.include.fsl", "match": "^\\s*(#)\\s*(include|import)\\s+([<\"].*[>\"])", "captures": { "1":{"name":"punctuation.definition.directive.fsl"}, "2":{"name":"keyword.control.directive.include.fsl"}, "3":{"name":"string.quoted.other.lt-gt.include.fsl"} } },
+      { "name": "keyword.control.directive.fsl", "match": "^\\s*#\\s*(?:undef|if|ifdef|ifndef|else|elif|endif|pragma|line|error|warning)\\b" }
+    ] }
+  }
+}

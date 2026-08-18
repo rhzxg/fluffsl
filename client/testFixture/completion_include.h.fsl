@@ -1,0 +1,1 @@
+float4 includedFixtureFunction(float4 value) { return value; }
