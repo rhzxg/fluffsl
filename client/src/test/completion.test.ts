@@ -14,7 +14,11 @@ suite('Should do completion', () => {
 		await testCompletion(docUri, new vscode.Position(0, 0), {
 			items: [
 				{ label: 'float4', kind: vscode.CompletionItemKind.Struct },
+				{ label: 'SamplerState', kind: vscode.CompletionItemKind.Struct },
 				{ label: 'mul', kind: vscode.CompletionItemKind.Function },
+				{ label: 'SV_Position', kind: vscode.CompletionItemKind.Field },
+				{ label: 'TEXCOORD0', kind: vscode.CompletionItemKind.Field },
+				{ label: 'UPDATE_FREQ_PER_BATCH', kind: vscode.CompletionItemKind.EnumMember },
 				{ label: 'includedFixtureFunction', kind: vscode.CompletionItemKind.Function }
 			]
 		});

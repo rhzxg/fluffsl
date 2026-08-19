@@ -1,0 +1,6 @@
+#ifndef SEMANTIC_TOKENS_INCLUDE_H_FSL
+#define SEMANTIC_TOKENS_INCLUDE_H_FSL
+
+#define g_fixture_mask_enabled (1 << 5)
+
+#endif

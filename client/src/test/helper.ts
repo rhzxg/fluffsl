@@ -16,7 +16,10 @@ export let platformEol: string;
  */
 export async function activate(docUri: vscode.Uri) {
 	// The extensionId is `publisher.name` from package.json
-	const ext = vscode.extensions.getExtension('fluffsl.forge-shading-language')!;
+	const ext = vscode.extensions.getExtension('rhzxg.fluffsl');
+	if (!ext) {
+		throw new Error('Extension rhzxg.fluffsl was not loaded by the test host');
+	}
 	await ext.activate();
 	try {
 		doc = await vscode.workspace.openTextDocument(docUri);

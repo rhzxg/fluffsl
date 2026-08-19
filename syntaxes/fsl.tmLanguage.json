@@ -8,6 +8,8 @@
     { "name": "keyword.control.fsl", "match": "\\b(?:if|else|for|while|do|switch|case|default|break|continue|return|discard)\\b" },
     { "name": "storage.modifier.fsl", "match": "\\b(?:const|static|inline|extern|in|out|inout|uniform|shared|groupshared|precise|nointerpolation)\\b" },
     { "name": "storage.type.fsl", "match": "\\b(?:void|bool[2-4]?|int[2-4]?|uint[2-4]?|float(?:[2-4](?:x[2-4])?)?|half[2-4]?|short[2-4]?|ushort[2-4]?|Texture(?:1D|2D|2DArray|3D|Cube)|RWTexture(?:1D|2D|2DArray|3D)|Sampler(?:Comparison)?State|ByteBuffer|RWByteBuffer)\\b" },
+    { "name": "constant.language.shader-slot.fsl", "match": "\\b(?:SV_[A-Za-z][A-Za-z0-9_]*|(?:POSITION|NORMAL|TANGENT|BITANGENT|COLOR|TEXCOORD|BLENDINDICES|BLENDWEIGHT)[A-Za-z0-9]*)\\b" },
+    { "name": "constant.language.update-frequency.fsl", "match": "\\bUPDATE_FREQ_(?:NONE|PER_FRAME|PER_BATCH|PER_DRAW|USER)\\b" },
     { "name": "support.function.macro.fsl", "match": "\\b(?:STRUCT|DATA|CBUFFER|PUSH_CONSTANT|RES|INIT_MAIN|RETURN|VS_MAIN|PS_MAIN|CS_MAIN|TC_MAIN|TE_MAIN)\\b" },
     { "name": "entity.name.function.fsl", "match": "\\b[A-Za-z_]\\w*(?=\\s*\\()" }
   ],

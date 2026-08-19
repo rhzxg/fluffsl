@@ -1,0 +1,30 @@
+#include "semantic_tokens_include.h.fsl"
+
+STRUCT(FixtureRecord)
+{
+    DATA(float3, sample_vector, TEXCOORD7);
+};
+
+STRUCT(FixtureResult)
+{
+#if defined(FIXTURE_PATH_A)
+    DATA(float4, first_value, SV_Target6);
+#elif defined(FIXTURE_PATH_B)
+    DATA(float4, second_value, SV_Target7);
+#endif
+};
+
+float FixtureTransform(float input_value)
+{
+    FixtureResult result;
+
+    if ((Get(fixture_state).bits & g_fixture_mask_enabled) != 0)
+    {
+        for (uint i = 0; i < 2; ++i)
+        {
+            input_value += float(i);
+        }
+    }
+
+    return input_value;
+}
