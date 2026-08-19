@@ -9,7 +9,7 @@
 		"type": "git",
 		"url": "https://github.com/rhzxg/fluffsl.git"
 	},
-	"publisher": "fluffsl",
+	"publisher": "rhzxg",
 	"categories": ["Programming Languages"],
 	"keywords": [
 		"multi-root ready"
